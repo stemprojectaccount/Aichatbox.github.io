@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xúc xắc Lịch sử Việt Nam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+        
+        .dice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            perspective: 1000px;
+        }
+        
+        .dice {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease;
+            margin-bottom: 20px;
+        }
+        
+        .dice.rolling {
+            animation: rolling 2s ease-out;
+        }
+        
+        @keyframes rolling {
+            0% { transform: rotateX(0) rotateY(0); }
+            25% { transform: rotateX(360deg) rotateY(180deg); }
+            50% { transform: rotateX(720deg) rotateY(360deg); }
+            75% { transform: rotateX(1080deg) rotateY(540deg); }
+            100% { transform: rotateX(1440deg) rotateY(720deg); }
+        }
+        
+        .dice-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #333;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            border: 2px solid #fff;
+            overflow: hidden;
+        }
+        
+        .dice-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .dice-face .character-name {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 3px;
+        }
+        
+        .dice-number {
+            font-size: 4rem;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .face-1 { transform: rotateY(0deg) translateZ(100px); }
+        .face-2 { transform: rotateY(180deg) translateZ(100px); }
+        .face-3 { transform: rotateY(90deg) translateZ(100px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(100px); }
+        .face-5 { transform: rotateX(90deg) translateZ(100px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(100px); }
+        
+        .roll-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .roll-button:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .roll-button:active {
+            transform: translateY(1px);
+        }
+        
+        .roll-button i {
+            margin-right: 10px;
+        }
+        
+        .result {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            text-align: center;
+            min-height: 80px;
+        }
+        
+        .info-container {
+            margin: 30px 0;
+        }
+        
+        .general-info {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .general-info h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #2575fc;
+            padding-bottom: 10px;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+        
+        .answer-input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .check-button {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .check-button:hover {
+            background: #1a60d0;
+        }
+        
+        .answer {
+            display: none;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #2575fc;
+        }
+        
+        .feedback {
+            display: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .history-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .history-container h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .history-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #2575fc;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease;
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+        
+        .score-container {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .character-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 10px auto;
+            display: block;
+            border: 3px solid #2575fc;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .dice {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .face-1 { transform: rotateY(0deg) translateZ(75px); }
+            .face-2 { transform: rotateY(180deg) translateZ(75px); }
+            .face-3 { transform: rotateY(90deg) translateZ(75px); }
+            .face-4 { transform: rotateY(-90deg) translateZ(75px); }
+            .face-5 { transform: rotateX(90deg) translateZ(75px); }
+            .face-6 { transform: rotateX(-90deg) translateZ(75px); }
+            
+            .dice-face .character-name {
+                font-size: 0.6rem;
+            }
+            
+            .dice-number {
+                font-size: 3rem;
+            }
+            
+            .roll-button {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .character-image {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dice"></i> Xúc Xắc Lịch Sử Việt Nam</h1>
+            <p class="description">Tung xúc xắc, trả lời câu hỏi và kiểm tra kiến thức lịch sử của bạn</p>
+        </header>
+        
+        <div class="dice-container">
+            <div class="dice" id="dice">
+                <!-- Mặt 1 - Võ Nguyên Giáp -->
+                <div class="dice-face face-1">
+                    <img src="https://i.postimg.cc/CzcHjJgX/dice-face-1.png" class="dice-img" alt="Mặt 1 - Võ Nguyên Giáp">
+                    <div class="dice-number">1</div>
+                    <div class="character-name">Võ Nguyên Giáp</div>
+                </div>
+                
+                <!-- Mặt 2 - Hai Bà Trưng -->
+                <div class="dice-face face-2">
+                    <img src="https://i.postimg.cc/Pp6Ym5GZ/dice-face-2.png" class="dice-img" alt="Mặt 2 - Hai Bà Trưng">
+                    <div class="dice-number">2</div>
+                    <div class="character-name">Hai Bà Trưng</div>
+                </div>
+                
+                <!-- Mặt 3 - Ngô Quyền -->
+                <div class="dice-face face-3">
+                    <img src="https://i.postimg.cc/F7k3LvTd/dice-face-3.png" class="dice-img" alt="Mặt 3 - Ngô Quyền">
+                    <div class="dice-number">3</div>
+                    <div class="character-name">Ngô Quyền</div>
+                </div>
+                
+                <!-- Mặt 4 - Trần Hưng Đạo -->
+                <div class="dice-face face-4">
+                    <img src="https://i.postimg.cc/4KP9gxxM/dice-face-4.png" class="dice-img" alt="Mặt 4 - Trần Hưng Đạo">
+                    <div class="dice-number">4</div>
+                    <div class="character-name">Trần Hưng Đạo</div>
+                </div>
+                
+                <!-- Mặt 5 - Hồ Chí Minh -->
+                <div class="dice-face face-5">
+                    <img src="https://i.postimg.cc/RWVmYS2q/dice-face-5.png" class="dice-img" alt="Mặt 5 - Hồ Chí Minh">
+                    <div class="dice-number">5</div>
+                    <div class="character-name">Hồ Chí Minh</div>
+                </div>
+                
+                <!-- Mặt 6 - Nguyễn Huệ (ĐÃ CẬP NHẬT ẢNH) -->
+                <div class="dice-face face-6">
+                    <img src="https://i.postimg.cc/0N8Z4MXc/OIP-1.jpg" class="dice-img" alt="Mặt 6 - Nguyễn Huệ">
+                    <div class="dice-number">6</div>
+                    <div class="character-name">Nguyễn Huệ</div>
+                </div>
+            </div>
+            
+            <button class="roll-button" id="roll-button">
+                <i class="fas fa-dice-d20"></i> Tung Xúc Xắc
+            </button>
+            
+            <div class="result" id="result">Kết quả: </div>
+        </div>
+        
+        <div class="score-container" id="score-container">
+            Điểm số: <span id="score">0</span>
+        </div>
+        
+        <div class="info-container" id="info-container">
+            <!-- Thông tin sẽ được tạo động bằng JavaScript -->
+        </div>
+        
+        <div class="history-container">
+            <h3>Lịch sử tung xúc xắc</h3>
+            <div class="history-list" id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu các nhân vật lịch sử
+        const historicalFigures = [
+            {
+                id: 1,
+                name: "Võ Nguyên Giáp",
+                image: "https://i.postimg.cc/CzcHjJgX/dice-face-1.png",
+                questions: [
+                    {
+                        id: 1,
+                        question: "Đại tướng Võ Nguyên Giáp được phong quân hàm Đại tướng vào năm nào?",
+                        answer: "Năm 1948, Đại tướng Võ Nguyên Giáp được Chủ tịch Hồ Chí Minh ký quyết định phong quân hàm Đại tướng."
+                    },
+                    {
+                        id: 2,
+                        question: "Chiến thắng lịch sử nào gắn liền với tên tuổi của Đại tướng Võ Nguyên Giáp?",
+                        answer: "Chiến thắng Điện Biên Phủ năm 1954, chiến công vang dội làm chấn động thế giới."
+                    },
+                    {
+                        id: 3,
+                        question: "Đại tướng Võ Nguyên Giáp còn được gọi bằng những danh xưng trân trọng nào?",
+                        answer: "Ông được gọi là 'Người anh cả của Quân đội Nhân dân Việt Nam', 'Vị tướng của nhân dân', và 'Napoléon đỏ'."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Hai Bà Trưng",
+                image: "https://i.postimg.cc/Pp6Ym5GZ/dice-face-2.png",
+                questions: [
+                    {
+                        id: 4,
+                        question: "Hai Bà Trưng quê ở đâu và xuất thân trong gia đình như thế nào?",
+                        answer: "Hai Bà Trưng quê ở huyện Mê Linh (nay thuộc Hà Nội). Hai bà xuất thân trong gia đình quý tộc, có dòng dõi vua Hùng. Cha là Lạc tướng huyện Mê Linh, mẹ là bà Man Thiện."
+                    },
+                    {
+                        id: 5,
+                        question: "Vì sao Hai Bà Trưng lại quyết tâm khởi nghĩa chống lại ách đô hộ của nhà Hán?",
+                        answer: "Hai Bà Trưng phất cờ khởi nghĩa vào mùa xuân năm 40 để trả thù cho chồng bà Trưng Trắc là Thi Sách bị thái thú Tô Định giết hại, đồng thời để giải phóng đất nước khỏi ách đô hộ tàn bạo của nhà Hán."
+                    },
+                    {
+                        id: 6,
+                        question: "Chiến thắng nào đã giúp Hai Bà Trưng giành lại được quyền tự chủ cho đất nước trong một thời gian ngắn?",
+                        answer: "Cuộc khởi nghĩa của Hai Bà Trưng giành thắng lợi với chiến thắng tại thành Luy Lâu (thuộc Bắc Ninh ngày nay), đánh bại thái thú Tô Định, buộc hắn phải chạy trốn về nước."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Ngô Quyền",
+                image: "https://i.postimg.cc/F7k3LvTd/dice-face-3.png",
+                questions: [
+                    {
+                        id: 7,
+                        question: "Ngô Quyền quê ở đâu và có công lao gì trong lịch sử Việt Nam?",
+                        answer: "Ngô Quyền quê ở Đường Lâm (nay thuộc Hà Nội). Ông có công đánh bại quân Nam Hán trên sông Bạch Đằng năm 938, kết thúc hơn 1000 năm Bắc thuộc, mở ra thời kỳ độc lập tự chủ lâu dài cho dân tộc Việt Nam."
+                    },
+                    {
+                        id: 8,
+                        question: "Trận chiến lịch sử nào gắn liền với tên tuổi của Ngô Quyền?",
+                        answer: "Trận chiến lịch sử gắn liền với tên tuổi của Ngô Quyền là trận Bạch Đằng năm 938, nơi ông đã cho đóng cọc trên sông và nhử quân địch vào trận địa đã chuẩn bị sẵn, đánh tan quân Nam Hán."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: "Trần Hưng Đạo",
+                image: "https://i.postimg.cc/4KP9gxxM/dice-face-4.png",
+                questions: [
+                    {
+                        id: 9,
+                        question: "Trần Hưng Đạo tên thật là gì và có vai trò như thế nào trong lịch sử Việt Nam?",
+                        answer: "Trần Hưng Đạo tên thật là Trần Quốc Tuấn. Ông là một nhà quân sự thiên tài, anh hùng dân tộc, có công lao to lớn trong ba lần kháng chiến chống quân Nguyên Mông xâm lược."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                name: "Hồ Chí Minh",
+                image: "https://i.postimg.cc/RWVmYS2q/dice-face-5.png",
+                questions: [
+                    {
+                        id: 10,
+                        question: "Hồ Chí Minh sinh năm nào, quê ở đâu?",
+                        answer: "Hồ Chí Minh sinh ngày 19 tháng 5 năm 1890, quê ở làng Kim Liên, huyện Nam Đàn, tỉnh Nghệ An."
+                    }
+                ]
+            },
+            {
+                id: 6,
+                name: "Nguyễn Huệ",
+                image: "https://i.postimg.cc/0N8Z4MXc/OIP-1.jpg",
+                questions: [
+                    {
+                        id: 11,
+                        question: "Nguyễn Huệ còn được biết đến với danh hiệu nào?",
+                        answer: "Nguyễn Huệ còn được biết đến với danh hiệu Quang Trung hoặc Hoàng đế Quang Trung, là vị hoàng đế thứ hai của nhà Tây Sơn."
+                    }
+                ]
+            }
+        ];
+
+        // Biến toàn cục
+        let currentFace = 0;
+        let score = 0;
+        let rollHistory = [];
+        let rolling = false;
+
+        // Các góc xoay tương ứng với các mặt xúc xắc
+        const rotations = [
+            { x: 0, y: 0 },       // Mặt 1
+            { x: 0, y: 180 },     // Mặt 2
+            { x: 0, y: 90 },      // Mặt 3
+            { x: 0, y: -90 },     // Mặt 4
+            { x: 90, y: 0 },      // Mặt 5
+            { x: -90, y: 0 }      // Mặt 6
+        ];
+
+        // Hàm khởi tạo thông tin và câu hỏi
+        function initInfoContainer() {
+            const infoContainer = document.getElementById('info-container');
+            infoContainer.innerHTML = '';
+            
+            historicalFigures.forEach(figure => {
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'general-info';
+                infoDiv.id = `info-${figure.id}`;
+                infoDiv.style.display = 'none';
+                
+                const title = document.createElement('h3');
+                title.textContent = figure.name;
+                
+                const img = document.createElement('img');
+                img.src = figure.image;
+                img.alt = figure.name;
+                img.className = 'character-image';
+                
+                infoDiv.appendChild(title);
+                infoDiv.appendChild(img);
+                
+                // Thêm các câu hỏi
+                figure.questions.forEach(q => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    
+                    const questionText = document.createElement('div');
+                    questionText.className = 'question-text';
+                    questionText.textContent = q.question;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'answer-input';
+                    input.id = `input-${q.id}`;
+                    input.placeholder = 'Nhập câu trả lời của bạn...';
+                    
+                    const checkButton = document.createElement('button');
+                    checkButton.className = 'check-button';
+                    checkButton.textContent = 'Kiểm tra';
+                    checkButton.setAttribute('data-id', q.id);
+                    
+                    const feedback = document.createElement('div');
+                    feedback.className = 'feedback';
+                    feedback.id = `feedback-${q.id}`;
+                    
+                    const answer = document.createElement('div');
+                    answer.className = 'answer';
+                    answer.id = `answer-${q.id}`;
+                    answer.textContent = q.answer;
+                    
+                    questionDiv.appendChild(questionText);
+                    questionDiv.appendChild(input);
+                    questionDiv.appendChild(checkButton);
+                    questionDiv.appendChild(feedback);
+                    questionDiv.appendChild(answer);
+                    
+                    infoDiv.appendChild(questionDiv);
+                });
+                
+                infoContainer.appendChild(infoDiv);
+            });
+        }
+
+        // Hàm tung xúc xắc
+        function rollDice() {
+            if (rolling) return;
+            
+            rolling = true;
+            const dice = document.getElementById('dice');
+            const result = document.getElementById('result');
+            const historyList = document.getElementById('history-list');
+            
+            // Ẩn thông tin hiện tại với hiệu ứng fade-out
+            if (currentFace > 0) {
+                const currentInfo = document.getElementById(`info-${currentFace}`);
+                if (currentInfo) {
+                    currentInfo.classList.add('fade-out');
+                    setTimeout(() => {
+                        currentInfo.style.display = 'none';
+                        currentInfo.classList.remove('fade-out');
+                    }, 500);
+                }
+            }
+            
+            // Thêm hiệu ứng rolling
+            dice.classList.add('rolling');
+            result.textContent = "Đang lăn...";
+            
+            // Tạo số ngẫu nhiên từ 1 đến 6
+            const randomValue = Math.floor(Math.random() * 6) + 1;
+            
+            // Sau khi hiệu ứng kết thúc, hiển thị kết quả
+            setTimeout(() => {
+                dice.classList.remove('rolling');
+                
+                // Áp dụng góc xoay cho mặt xúc xắc được chọn
+                const rotation = rotations[randomValue - 1];
+                dice.style.transform = `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`;
+                
+                // Cập nhật kết quả
+                currentFace = randomValue;
+                const figure = historicalFigures[randomValue - 1];
+                result.innerHTML = `Kết quả: <span style="font-size: 2.5rem;">${randomValue}</span> - ${figure.name}`;
+                
+                // Hiển thị thông tin tương ứng với mặt xúc xắc
+                setTimeout(() => {
+                    const infoSection = document.getElementById('info-' + randomValue);
+                    if (infoSection) {
+                        infoSection.style.display = 'block';
+                        infoSection.classList.add('fade-in');
+                    }
+                }, 500);
+                
+                // Thêm vào lịch sử
+                rollHistory.unshift(randomValue);
+                updateHistory();
+                
+                rolling = false;
+            }, 2000);
+        }
+        
+        // Cập nhật hiển thị lịch sử
+        function updateHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            // Chỉ hiển thị tối đa 10 kết quả gần nhất
+            const displayHistory = rollHistory.slice(0, 10);
+            
+            displayHistory.forEach(value => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.textContent = value;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Hàm kiểm tra câu trả lời
+        function checkAnswer(questionId) {
+            const inputElement = document.getElementById(`input-${questionId}`);
+            const feedbackElement = document.getElementById(`feedback-${questionId}`);
+            const answerElement = document.getElementById(`answer-${questionId}`);
+            
+            const userAnswer = inputElement.value.trim().toLowerCase();
+            
+            // Tìm câu trả lời đúng
+            let correctAnswer = '';
+            historicalFigures.forEach(figure => {
+                figure.questions.forEach(q => {
+                    if (q.id === questionId) {
+                        correctAnswer = q.answer.toLowerCase();
+                    }
+                });
+            });
+            
+            // So sánh câu trả lời (đơn giản hóa)
+            if (userAnswer && correctAnswer.includes(userAnswer)) {
+                feedbackElement.textContent = 'Chính xác!';
+                feedbackElement.className = 'feedback correct';
+                score += 10;
+            } else {
+                feedbackElement.textContent = 'Chưa chính xác. Hãy thử lại!';
+                feedbackElement.className = 'feedback incorrect';
+                answerElement.style.display = 'block';
+            }
+            
+            // Hiển thị phản hồi
+            feedbackElement.style.display = 'block';
+            
+            // Cập nhật điểm
+            document.getElementById('score').textContent = score;
+        }
+
+        // Khởi tạo khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            initInfoContainer();
+            
+            // Gắn sự kiện cho nút tung xúc xắc
+            document.getElementById('roll-button').addEventListener('click', rollDice);
+            
+            // Gắn sự kiện cho các nút kiểm tra
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('check-button')) {
+                    const questionId = parseInt(e.target.getAttribute('data-id'));
+                    checkAnswer(questionId);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
